@@ -1,166 +1,146 @@
 #include <bits/stdc++.h>
-
 using namespace std;
+#define endl "\n"
 
-#define cin_2d(vec, n, m) for(int i = 0; i < n; i++) for(int j = 0; j < m && cin >> vec[i][j]; j++);
-#define cout_2d(vec, n, m) for(int i = 0; i < n; i++, cout << "\n") for(int j = 0; j < m && cout << vec[i][j] << " "; j++);
-#define fixed(n) fixed << setprecision(n)
-#define ceil(n, m) (((n) / (m)) + ((n) % (m) ? 1 : 0))
-#define fill(vec, value) memset(vec, value, sizeof(vec));
-#define mul_mod(a, b, m) (((a % m) * (b % m)) % m)
-#define add_mod(a, b, m) (((a % m) + (b % m)) % m)
-#define all(vec) vec.begin(), vec.end()
-#define rall(vec) vec.rbegin(), vec.rend()
-#define sz(x) int(x.size())
-#define debug(x) cout << #x << ": " << (x) << "\n";
-#define fi first
-#define se second
-#define ll long long
-#define ull unsigned long long
-#define Mod  1'000'000'007
-#define OO 2'000'000'000
-#define EPS 1e-9
-#define PI acos(-1)
-template < typename T = int > using Pair = pair < T, T >;
-vector < string > RET = {"NO", "YES"};
-
-template < typename T = int > istream& operator >> (istream &in, vector < T > &v) {
-    for (auto &x : v) in >> x;
-    return in;
-}
-
-template < typename T = int > ostream& operator << (ostream &out, const vector < T > &v) { 
-    for (const T &x : v) out << x << ' '; 
-    return out;
-}
-
-struct BST {
-
+class BST{
+private:
     int data;
-    BST *left, *right;
-
-    BST(int data = 0){
-        this -> data = data;
-        left = right = nullptr;
+    BST* left, *right;
+public:
+    BST(int _data = 0){
+        data = _data;
+        left = right = NULL;
     }
-
-    // Insert New node
-
-    BST* Insert(BST* root, int val){
-        if(!root) return new BST(val);
-        if(val > root -> data)
-            root -> right = Insert(root -> right, val);
-        else
-            root -> left = Insert(root -> left, val);
-        return root;
-    }
-
-    // Inorder Traverse (LRR)
-
-    void Inorder(BST* root){
-        if(!root) return;
-        Inorder(root -> left);
-        cout << root -> data << " ";
-        Inorder(root -> right);
-    }
-
-    // Preorde Traverse (RLR)
-
-    void Preorder(BST* root){
-        if(!root) return;
-        cout << root -> data << " ";
-        Preorder(root -> left);
-        Preorder(root -> right);
-    }
-
-    // Postorder Traverse (LRR)
-
-    void Postorder(BST* root){
-        if(!root) return;
-        Postorder(root -> left);
-        Postorder(root -> right);
-        cout << root -> data << " ";
-
-    }
-
-    // Traverse each level
-
-    void Level_Order(BST* root){
-        if(!root) return;
-        queue < BST* > bfs;
-        bfs.push(root);
-        while(!bfs.empty()){
-            BST* curr = bfs.front();
-            bfs.pop();
-            cout << curr -> data << " ";
-            if(curr -> left)
-                bfs.push(curr -> left);
-            if(curr -> right)
-                bfs.push(curr -> right);
-        }
-    }
-
-    // Search on a node
-
-    bool Search(BST* root, int val){
-        if(!root) return false;
-        if(root -> data == val) return true;
-        if(val > root -> data) return Search(root -> right, val);
-        else return Search(root -> left, val);
-    }
-
-    // Get minimum node in BST
-
-    BST* minValueNode(BST* node){
-        BST* current = node;
-        while (current && current -> left != nullptr) current = current -> left;
-        return current;
-    }
-
-    // Get maximum node in BST
-
-    BST* maxValueNode(BST* node){
-        BST* current = node;
-        while (current && current -> right != nullptr) current = current -> right;
-        return current;
-    }
-
-    // Delete Node
-
-    BST* Delete_Node(BST* root, int key){
-        if(!root) return root;
-        if(key < root -> data)
-            root -> left = Delete_Node(root -> left, key);
-        else if(key > root -> data)
-            root -> right = Delete_Node(root -> right, key);
-        else {
-            if(!root -> left && !root -> right) return nullptr;
-            else if(!root -> left){
-                BST* temp = root -> right;
-                free(root);
-                return temp;
-            }else if(!root -> right){
-                BST* temp = root -> left;
-                free(root);
-                return temp;
-            }
-            BST* temp = minValueNode(root -> right);
-            root -> data = temp -> data;
-            root -> right = Delete_Node(root -> right, temp -> data);
-        }
-        return root;
-    }
+    bool isEmpty();
+    int Length(BST* root);
+    void printInorder(BST* root);
+    void printPreorder(BST* root);
+    void printPostorder(BST* root);
+    int getDepth(BST* root);
+    BST* Insert(BST*root, int value);
+    BST* Delete(BST* root, int value);
+    bool findNode(BST* root, int value);
+    BST* getMin(BST* root);
+    BST* getMax(BST* root);
+    int getData(BST* root);
 };
 
-void Solve(){
-    
+bool BST::isEmpty(){
+    return this == NULL;
+}
+// count size of binary tree
+int BST::Length(BST *root) {
+    if(!root)
+        return 0;
+    return 1 + Length(root -> left) + Length(root -> right);
+}
+void BST::printInorder(BST *root) {
+    if(!root)
+        return;
+    printInorder(root -> left);
+    cout << root ->data << " ";
+    printInorder(root ->right);
+}
+void BST::printPreorder(BST *root) {
+    if(!root)
+        return;
+    cout << root ->data << " ";
+    printPreorder(root -> left);
+    printPreorder(root -> right);
+}
+void BST::printPostorder(BST *root) {
+    if(!root)
+        return;
+    printPostorder(root -> right);
+    printPostorder(root -> left);
+    cout << root ->data << " ";
+}
+int BST::getDepth(BST *root) {
+    if(!root)
+        return 0;
+    return 1 + max(getDepth(root -> right), getDepth(root -> left));
+}
+BST* BST::Insert(BST* root, int value) {
+    if(!root) {
+        return new BST(value);
+    }
+    if(root -> data > value)
+        root -> left = Insert(root -> left, value);
+    else
+        root -> right = Insert(root -> right, value);
+    return root;
 }
 
-int main(){
-    ios_base::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
-    int t = 1;
-    //cin >> t;
-    while(t--)
-        Solve();
+BST* BST::getMin(BST* root) {
+    BST* current = root;
+    while (current && current -> left != nullptr) current = current -> left;
+    return current;
+}
+BST* BST::getMax(BST* root) {
+    if(!root)
+        return root;
+    if(!root -> right)
+        return root;
+    return getMax(root -> right);
+}
+
+BST* BST:: Delete(BST* root, int key){
+    if(!root) return root;
+    if(key < root -> data)
+        root -> left = Delete(root -> left, key);
+    else if(key > root -> data)
+        root -> right = Delete(root -> right, key);
+    else {
+        if(!root -> left && !root -> right) return NULL;
+        else if(!root -> left){
+            BST* temp = root -> right;
+            free(root);
+            return temp;
+        }else if(!root -> right){
+            BST* temp = root -> left;
+            free(root);
+            return temp;
+        }
+        BST* temp = getMin(root -> right);
+        root -> data = temp -> data;
+        root -> right = Delete(root -> right, temp -> data);
+    }
+    return root;
+}
+bool BST::findNode(BST* root, int value) {
+    if(!root)
+        return 0;
+    if(root -> data == value)
+        return 1;
+    if(root -> data > value)
+        return findNode(root -> left, value);
+    else
+        return findNode(root -> right, value);
+}
+int BST::getData(BST *root) {
+    return root -> data;
+}
+int main()
+{
+    freopen("input.txt","r",stdin),freopen("output.txt","w",stdout);
+    BST *tree = NULL, obj;
+    tree = obj.Insert(tree, 10);
+    obj.Insert(tree, 8);
+    obj.Insert(tree, 7);
+    obj.Insert(tree, 9);
+    obj.printPostorder(tree);
+    cout << '\n';
+    obj.printPreorder(tree);
+    cout << '\n';
+    obj.printInorder(tree);
+    cout << '\n';
+    cout << obj.getDepth(tree) << endl;
+    cout << obj.Length(tree) << endl;
+    cout << obj.findNode(tree, 7) << endl;
+    cout << obj.findNode(tree, 11) << endl;
+    cout << obj.getData(obj.getMin(tree)) << endl;
+    cout << obj.getData(obj.getMax(tree)) << endl;
+    obj.Delete(tree, 10);
+    obj.printInorder(tree);
     return 0;
 }
